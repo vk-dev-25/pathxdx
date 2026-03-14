@@ -164,6 +164,8 @@ const CBADGE={Malignant:'bM',Benign:'bB','Normal/Control':'bN','Pre-malignant':'
 const PAGE_SIZE_OPTIONS=[20,60,120];
 let pageSize=20;
 
+// Bump this when you deploy new data so browsers don't show cached data.json
+const DATA_VERSION = '2';
 let DATA=[], filtered=[], currentTab='All', page=1;
 let sortCol=null, sortDir=1, expandedIdx=null;
 let ch1=null, ch2=null;
@@ -184,7 +186,7 @@ function setProgress(pct, msg){
 async function loadData(){
   try {
     setProgress(10,'Fetching data.json…');
-    const resp = await fetch('data.json');
+    const resp = await fetch('data.json?v='+DATA_VERSION);
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     setProgress(30,'Parsing blocks…');
     const raw = await resp.json();
