@@ -141,7 +141,18 @@ tr.dr:hover td{background:var(--bg2);cursor:pointer;}
         </tr></thead>
         <tbody id="tb"></tbody>
       </table></div>
-      <div class="pager"><span class="pi" id="pi"></span><button class="pb" id="pp" onclick="chPg(-1)">← Prev</button><span id="pnums" style="display:flex;gap:4px"></span><button class="pb" id="pn" onclick="chPg(1)">Next →</button></div>
+      <div class="pager">
+        <span class="pi" id="pi"></span>
+        <span class="pi" style="margin-right:8px">Rows per page:</span>
+        <span id="pageSizeOpts" style="display:flex;gap:2px">
+          <button class="pb" data-pp="20" onclick="setPageSize(20)">20</button>
+          <button class="pb" data-pp="60" onclick="setPageSize(60)">60</button>
+          <button class="pb" data-pp="120" onclick="setPageSize(120)">120</button>
+        </span>
+        <button class="pb" id="pp" onclick="chPg(-1)">← Prev</button>
+        <span id="pnums" style="display:flex;gap:4px"></span>
+        <button class="pb" id="pn" onclick="chPg(1)">Next →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -150,7 +161,8 @@ tr.dr:hover td{background:var(--bg2);cursor:pointer;}
 const TCLRS=['#378ADD','#1D9E75','#D85A30','#7F77DD','#BA7517','#D4537E','#639922','#888780','#3B8BD4','#0F6E56','#E24B4A','#EF9F27','#185FA5','#0F6E56','#993C1D'];
 const CMAP={Malignant:'#E24B4A',Benign:'#1D9E75','Normal/Control':'#888780','Pre-malignant':'#BA7517',Unknown:'#7F77DD'};
 const CBADGE={Malignant:'bM',Benign:'bB','Normal/Control':'bN','Pre-malignant':'bP',Unknown:'bU'};
-const PP=20;
+const PAGE_SIZE_OPTIONS=[20,60,120];
+let pageSize=20;
 
 let DATA=[], filtered=[], currentTab='All', page=1;
 let sortCol=null, sortDir=1, expandedIdx=null;
@@ -174,7 +186,7 @@ async function loadData(){
     setProgress(10,'Fetching data.json…');
     const resp = await fetch('data.json');
     if(!resp.ok) throw new Error('HTTP '+resp.status);
-    setProgress(30,'Parsing 444,988 blocks…');
+    setProgress(30,'Parsing blocks…');
     const raw = await resp.json();
     setProgress(70,'Processing records…');
     DATA = raw.map(r=>({
@@ -212,14 +224,17 @@ async function init(){
   const fT=document.getElementById('fT');
   tissues.forEach(t=>{const o=document.createElement('option');o.value=o.textContent=t;fT.appendChild(o);});
 
-  // Build tabs
-  const tabNames=['All',...new Set(DATA.map(r=>r.tab))];
-  document.getElementById('tabs').innerHTML=tabNames.map(t=>
+  // Build tabs by tissue type (sorted)
+  const tissueCounts = {};
+  DATA.forEach(r=>{ tissueCounts[r.tissue]=(tissueCounts[r.tissue]||0)+1; });
+  const tabTissues = ['All', ...Object.keys(tissueCounts).sort()];
+  document.getElementById('tabs').innerHTML=tabTissues.map(t=>
     `<button class="tab${t==='All'?' on':''}" onclick="setTab('${t.replace(/'/g,"\\'")}')">
-      ${t} <span style="opacity:.5;font-size:10px">(${t==='All'?DATA.length.toLocaleString():(DATA.filter(r=>r.tab===t).length).toLocaleString()})</span>
+      ${t} <span style="opacity:.5;font-size:10px">(${t==='All'?DATA.length.toLocaleString():(tissueCounts[t]||0).toLocaleString()})</span>
     </button>`
   ).join('');
 
+  document.querySelectorAll('#pageSizeOpts .pb').forEach(b=>b.classList.toggle('on',parseInt(b.dataset.pp,10)===pageSize));
   renderMetrics();
   renderCharts();
   renderTable();
@@ -268,7 +283,7 @@ function renderCharts(){
 }
 
 function renderTable(){
-  const s=(page-1)*PP,e=s+PP,rows=filtered.slice(s,e);
+  const s=(page-1)*pageSize,e=s+pageSize,rows=filtered.slice(s,e);
   document.getElementById('rcnt').textContent=`${filtered.length.toLocaleString()} blocks`;
   document.getElementById('tb').innerHTML=rows.map((r,i)=>{
     const idx=s+i;
@@ -288,7 +303,7 @@ function renderTable(){
       </div>
     </td></tr>`;
   }).join('');
-  const max=Math.max(1,Math.ceil(filtered.length/PP));
+  const max=Math.max(1,Math.ceil(filtered.length/pageSize));
   document.getElementById('pi').textContent=`${Math.min(s+1,filtered.length).toLocaleString()}–${Math.min(e,filtered.length).toLocaleString()} of ${filtered.length.toLocaleString()}`;
   document.getElementById('pp').disabled=page<=1;
   document.getElementById('pn').disabled=page>=max;
@@ -315,7 +330,7 @@ function applyF(){
   const g=document.getElementById('fG').value;
   const a=document.getElementById('fA').value.toLowerCase();
   filtered=DATA.filter(r=>{
-    if(currentTab!=='All'&&r.tab!==currentTab)return false;
+    if(currentTab!=='All'&&r.tissue!==currentTab)return false;
     if(t&&r.tissue!==t)return false;
     if(d&&!r.diagText.toLowerCase().includes(d)&&!r.diagShort.toLowerCase().includes(d))return false;
     if(c&&r.cat!==c)return false;
@@ -363,7 +378,12 @@ function doSort(){
   });
 }
 
-function chPg(d){const max=Math.ceil(filtered.length/PP);page=Math.max(1,Math.min(max,page+d));expandedIdx=null;renderTable();}
+function setPageSize(n){
+  pageSize=n;
+  document.querySelectorAll('#pageSizeOpts .pb').forEach(b=>b.classList.toggle('on',parseInt(b.dataset.pp,10)===pageSize));
+  page=1;expandedIdx=null;renderTable();
+}
+function chPg(d){const max=Math.ceil(filtered.length/pageSize);page=Math.max(1,Math.min(max,page+d));expandedIdx=null;renderTable();}
 function goPage(p){page=p;expandedIdx=null;renderTable();}
 
 function doExport(){
