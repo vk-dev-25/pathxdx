@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PathXDx — Tissue Block Catalog</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--bg:#fff;--bg2:#f7f6f3;--bg3:#f0efe9;--tx:#1a1a18;--tx2:#6b6a65;--tx3:#9c9a92;--bd:rgba(0,0,0,0.1);--bd2:rgba(0,0,0,0.2);--blue:#185FA5;--bbg:#E6F1FB;--bt:#0C447C;--rbg:#FCEBEB;--rt:#791F1F;--tbg:#E1F5EE;--tt:#085041;--abg:#FAEEDA;--at:#633806;--gbg:#F1EFE8;--gt:#444441;--pbg:#EEEDFE;--pt:#3C3489;--r:8px;--rl:12px;}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1a;--bg2:#242422;--bg3:#2a2a27;--tx:#e8e6dc;--tx2:#9c9a92;--tx3:#6b6a65;--bd:rgba(255,255,255,0.1);--bd2:rgba(255,255,255,0.2);--blue:#378ADD;--bbg:#042C53;--bt:#85B7EB;--rbg:#501313;--rt:#F09595;--tbg:#04342C;--tt:#5DCAA5;--abg:#412402;--at:#EF9F27;--gbg:#2C2C2A;--gt:#B4B2A9;--pbg:#26215C;--pt:#AFA9EC;}}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--tx);font-size:14px;}
+.hdr{background:var(--bg);border-bottom:0.5px solid var(--bd);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
+.brand{display:flex;align-items:center;gap:10px;}
+.logo{width:34px;height:34px;background:var(--blue);border-radius:var(--r);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;flex-shrink:0;}
+.bname{font-size:15px;font-weight:600;color:var(--tx);}
+.bsub{font-size:11px;color:var(--tx3);margin-top:1px;}
+.hact{display:flex;gap:8px;align-items:center;}
+.main{max-width:1300px;margin:0 auto;padding:18px 20px;}
+/* Loading */
+.loading{text-align:center;padding:60px 20px;color:var(--tx2);}
+.spin{width:30px;height:30px;border:2px solid var(--bd2);border-top-color:var(--blue);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 14px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.prog-wrap{width:260px;height:6px;background:var(--bg2);border-radius:3px;margin:10px auto;}
+.prog-bar{height:100%;background:var(--blue);border-radius:3px;transition:width .3s;}
+/* Metrics */
+.metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px;}
+.metric{background:var(--bg2);border-radius:var(--r);padding:12px 14px;}
+.mlbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.mval{font-size:20px;font-weight:600;line-height:1;color:var(--tx);}
+.msub{font-size:11px;color:var(--tx3);margin-top:3px;}
+/* Charts */
+.charts{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:14px;}
+.cc{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:14px;}
+.ctitle{font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.cleg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+.cli{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--tx2);}
+.cdot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap;}
+.tab{font-size:11px;padding:4px 11px;border:0.5px solid var(--bd);border-radius:20px;background:var(--bg);color:var(--tx2);cursor:pointer;white-space:nowrap;}
+.tab:hover{background:var(--bg2);}
+.tab.on{background:var(--bbg);color:var(--bt);border-color:transparent;font-weight:600;}
+/* Filters */
+.filters{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+.fg{display:flex;flex-direction:column;gap:3px;flex:1;min-width:110px;}
+.fg label{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;}
+.fg select,.fg input{font-size:12px;padding:6px 9px;background:var(--bg2);border:0.5px solid var(--bd2);border-radius:var(--r);color:var(--tx);outline:none;}
+.fg select:focus,.fg input:focus{border-color:var(--blue);}
+.btn{font-size:12px;padding:6px 13px;border:0.5px solid var(--bd2);border-radius:var(--r);background:transparent;color:var(--tx);cursor:pointer;white-space:nowrap;}
+.btn:hover{background:var(--bg2);}
+.btn.pri{background:var(--bbg);color:var(--bt);border-color:transparent;font-weight:500;}
+/* Table */
+.tw{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;}
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:0.5px solid var(--bd);gap:10px;flex-wrap:wrap;}
+.rcnt{font-size:12px;color:var(--tx3);}
+.tscr{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
+th{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:0.5px solid var(--bd);text-align:left;white-space:nowrap;background:var(--bg2);cursor:pointer;user-select:none;overflow:hidden;}
+th:hover{color:var(--tx);}
+th.srt .si{color:var(--blue);opacity:1;}
+.si{margin-left:3px;opacity:.35;font-style:normal;}
+td{padding:9px 10px;border-bottom:0.5px solid var(--bd);vertical-align:top;overflow:hidden;text-overflow:ellipsis;}
+tr:last-child td{border-bottom:none;}
+tr.dr:hover td{background:var(--bg2);cursor:pointer;}
+.acn{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--tx2);white-space:nowrap;}
+.dp{font-size:12px;line-height:1.4;}
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;white-space:nowrap;}
+.bM{background:var(--rbg);color:var(--rt);}
+.bB{background:var(--tbg);color:var(--tt);}
+.bP{background:var(--abg);color:var(--at);}
+.bN{background:var(--gbg);color:var(--gt);}
+.bU{background:var(--pbg);color:var(--pt);}
+.bT{background:var(--bbg);color:var(--bt);}
+.xrow{display:none;}
+.xrow>td{background:var(--bg2);padding:12px 14px;}
+.xcnt{font-size:12px;color:var(--tx2);line-height:1.6;}
+.xcnt b{color:var(--tx);}
+.pager{display:flex;align-items:center;gap:5px;padding:10px 14px;border-top:0.5px solid var(--bd);}
+.pi{font-size:11px;color:var(--tx3);margin-right:auto;}
+.pb{font-size:11px;padding:3px 9px;background:transparent;border:0.5px solid var(--bd2);border-radius:var(--r);color:var(--tx);cursor:pointer;}
+.pb:hover{background:var(--bg2);}
+.pb.on{background:var(--bbg);color:var(--bt);border-color:transparent;}
+.pb:disabled{opacity:.3;cursor:default;}
+.notice{background:var(--abg);color:var(--at);border-radius:var(--r);padding:10px 14px;font-size:12px;margin-bottom:12px;display:none;}
+@media(max-width:700px){.metrics{grid-template-columns:1fr 1fr;}.charts{grid-template-columns:1fr;}.fg{min-width:100%;}}
+@media print{.hdr,.tabs,.filters,.pager,.hact{display:none!important;}.main{padding:0;}.tw{border:none;}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="brand">
+    <div class="logo">PX</div>
+    <div>
+      <div class="bname">PathXDx Tissue Block Catalog</div>
+      <div class="bsub" id="bsub">Loading inventory…</div>
+    </div>
+  </div>
+  <div class="hact">
+    <button class="btn" onclick="doExport()" id="expBtn" disabled>Export CSV</button>
+    <button class="btn pri" onclick="window.print()">Print / PDF</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loadWrap" class="loading">
+    <div class="spin"></div>
+    <div id="loadMsg">Reading inventory data…</div>
+    <div class="prog-wrap"><div class="prog-bar" id="progBar" style="width:5%"></div></div>
+    <div style="margin-top:10px;font-size:11px;color:var(--tx3)" id="loadHint">Make sure <strong>data.json</strong> is in the same folder as this HTML file</div>
+  </div>
+  <div id="app" style="display:none">
+    <div id="notice" class="notice"></div>
+    <div class="metrics" id="metrics"></div>
+    <div class="charts">
+      <div class="cc"><div class="ctitle">Top tissue types</div><div class="cleg" id="lg1"></div><div style="position:relative;height:180px"><canvas id="c1"></canvas></div></div>
+      <div class="cc"><div class="ctitle">Diagnosis category</div><div class="cleg" id="lg2"></div><div style="position:relative;height:180px"><canvas id="c2"></canvas></div></div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="filters">
+      <div class="fg"><label>Tissue type</label><select id="fT" onchange="applyF()"><option value="">All tissues</option></select></div>
+      <div class="fg"><label>Diagnosis keyword</label><input id="fD" placeholder="e.g. leukemia, adenocarcinoma…" oninput="applyF()"/></div>
+      <div class="fg"><label>Category</label>
+        <select id="fC" onchange="applyF()"><option value="">All</option><option>Malignant</option><option>Benign</option><option>Normal/Control</option><option>Pre-malignant</option><option>Unknown</option></select>
+      </div>
+      <div class="fg"><label>Gender</label><select id="fG" onchange="applyF()"><option value="">All</option><option value="F">Female</option><option value="M">Male</option></select></div>
+      <div class="fg"><label>Accession #</label><input id="fA" placeholder="e.g. WH2008-" oninput="applyF()"/></div>
+      <button class="btn" onclick="clearF()">Clear</button>
+    </div>
+    <div class="tw">
+      <div class="tbar"><span class="rcnt" id="rcnt"></span><button class="btn" onclick="doExport()">Export filtered CSV</button></div>
+      <div class="tscr"><table style="table-layout:fixed">
+        <colgroup><col style="width:130px"><col style="width:130px"><col style="width:110px"><col style="width:55px"><col style="width:45px"><col style="width:auto"></colgroup>
+        <thead><tr>
+          <th onclick="srt(0)">Accession # <i class="si">↕</i></th>
+          <th onclick="srt(3)">Tissue <i class="si">↕</i></th>
+          <th onclick="srt(6)">Category <i class="si">↕</i></th>
+          <th onclick="srt(2)">Gender <i class="si">↕</i></th>
+          <th>Age</th>
+          <th onclick="srt(4)">Primary diagnosis <i class="si">↕</i></th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table></div>
+      <div class="pager"><span class="pi" id="pi"></span><button class="pb" id="pp" onclick="chPg(-1)">← Prev</button><span id="pnums" style="display:flex;gap:4px"></span><button class="pb" id="pn" onclick="chPg(1)">Next →</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TCLRS=['#378ADD','#1D9E75','#D85A30','#7F77DD','#BA7517','#D4537E','#639922','#888780','#3B8BD4','#0F6E56','#E24B4A','#EF9F27','#185FA5','#0F6E56','#993C1D'];
+const CMAP={Malignant:'#E24B4A',Benign:'#1D9E75','Normal/Control':'#888780','Pre-malignant':'#BA7517',Unknown:'#7F77DD'};
+const CBADGE={Malignant:'bM',Benign:'bB','Normal/Control':'bN','Pre-malignant':'bP',Unknown:'bU'};
+const PP=20;
+
+let DATA=[], filtered=[], currentTab='All', page=1;
+let sortCol=null, sortDir=1, expandedIdx=null;
+let ch1=null, ch2=null;
+
+function calcAge(dob){
+  if(!dob||dob==='nan') return null;
+  const d=new Date(dob);
+  if(isNaN(d)) return null;
+  const a=Math.floor((new Date('2024-01-01')-d)/31557600000);
+  return(a>0&&a<120)?a:null;
+}
+
+function setProgress(pct, msg){
+  document.getElementById('progBar').style.width=pct+'%';
+  if(msg) document.getElementById('loadMsg').textContent=msg;
+}
+
+async function loadData(){
+  try {
+    setProgress(10,'Fetching data.json…');
+    const resp = await fetch('data.json');
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    setProgress(30,'Parsing 444,988 blocks…');
+    const raw = await resp.json();
+    setProgress(70,'Processing records…');
+    DATA = raw.map(r=>({
+      acc:r[0], dob:r[1], gender:r[2], tissue:r[3],
+      diagShort:r[4], diagText:r[5], cat:r[6], tab:r[7],
+      age:calcAge(r[1])
+    }));
+    setProgress(100,'Ready');
+    return true;
+  } catch(e){
+    return false;
+  }
+}
+
+async function init(){
+  const ok = await loadData();
+  if(!ok){
+    document.getElementById('loadMsg').textContent='Could not load data.json';
+    document.getElementById('loadHint').innerHTML=
+      '<strong>How to fix:</strong> Make sure <code>data.json</code> is in the same folder as this HTML file, then open via a local server or double-click the HTML.<br><br>'+
+      '<strong>Quick option:</strong> Run <code>python3 -m http.server 8080</code> in that folder, then open <code>http://localhost:8080</code>';
+    return;
+  }
+
+  document.getElementById('loadWrap').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('bsub').textContent=
+    DATA.length.toLocaleString()+' blocks — '+new Date().toLocaleDateString();
+  document.getElementById('expBtn').disabled=false;
+
+  filtered=[...DATA];
+
+  // Build tissue filter
+  const tissues=[...new Set(DATA.map(r=>r.tissue))].sort();
+  const fT=document.getElementById('fT');
+  tissues.forEach(t=>{const o=document.createElement('option');o.value=o.textContent=t;fT.appendChild(o);});
+
+  // Build tabs
+  const tabNames=['All',...new Set(DATA.map(r=>r.tab))];
+  document.getElementById('tabs').innerHTML=tabNames.map(t=>
+    `<button class="tab${t==='All'?' on':''}" onclick="setTab('${t.replace(/'/g,"\\'")}')">
+      ${t} <span style="opacity:.5;font-size:10px">(${t==='All'?DATA.length.toLocaleString():(DATA.filter(r=>r.tab===t).length).toLocaleString()})</span>
+    </button>`
+  ).join('');
+
+  renderMetrics();
+  renderCharts();
+  renderTable();
+}
+
+function renderMetrics(){
+  const src=filtered;
+  const ts=new Set(src.map(r=>r.tissue));
+  const f=src.filter(r=>r.gender==='F').length;
+  const m=src.filter(r=>r.gender==='M').length;
+  const ages=src.map(r=>r.age).filter(Boolean);
+  const mal=src.filter(r=>r.cat==='Malignant').length;
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="mlbl">Total blocks</div><div class="mval">${src.length.toLocaleString()}</div><div class="msub">Matching filters</div></div>
+    <div class="metric"><div class="mlbl">Tissue types</div><div class="mval">${ts.size}</div><div class="msub">Unique categories</div></div>
+    <div class="metric"><div class="mlbl">Female</div><div class="mval">${f.toLocaleString()}</div><div class="msub">${src.length?Math.round(f/src.length*100):0}% of total</div></div>
+    <div class="metric"><div class="mlbl">Male</div><div class="mval">${m.toLocaleString()}</div><div class="msub">${src.length?Math.round(m/src.length*100):0}% of total</div></div>
+    <div class="metric"><div class="mlbl">Malignant</div><div class="mval">${mal.toLocaleString()}</div><div class="msub">${src.length?Math.round(mal/src.length*100):0}% of filtered</div></div>
+  `;
+}
+
+function renderCharts(){
+  const tc={};
+  filtered.forEach(r=>{tc[r.tissue]=(tc[r.tissue]||0)+1;});
+  const top=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  document.getElementById('lg1').innerHTML=top.map(([t],i)=>
+    `<span class="cli"><span class="cdot" style="background:${TCLRS[i%TCLRS.length]}"></span>${t}</span>`
+  ).join('');
+  if(ch1)ch1.destroy();
+  ch1=new Chart(document.getElementById('c1'),{
+    type:'bar',
+    data:{labels:top.map(([t])=>t.length>14?t.slice(0,14)+'…':t),datasets:[{data:top.map(([,c])=>c),backgroundColor:TCLRS,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw.toLocaleString()} blocks`}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'rgba(128,128,128,0.1)'},ticks:{font:{size:10},callback:v=>v>=1000?Math.round(v/1000)+'k':v}}}}
+  });
+  const cats=['Malignant','Benign','Normal/Control','Pre-malignant','Unknown'];
+  const cc=cats.map(c=>filtered.filter(r=>r.cat===c).length);
+  document.getElementById('lg2').innerHTML=cats.map((c,i)=>
+    `<span class="cli"><span class="cdot" style="background:${CMAP[c]}"></span>${c} (${cc[i].toLocaleString()})</span>`
+  ).join('');
+  if(ch2)ch2.destroy();
+  ch2=new Chart(document.getElementById('c2'),{
+    type:'doughnut',
+    data:{labels:cats,datasets:[{data:cc,backgroundColor:cats.map(c=>CMAP[c]),borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw.toLocaleString()}`}}},cutout:'62%'}
+  });
+}
+
+function renderTable(){
+  const s=(page-1)*PP,e=s+PP,rows=filtered.slice(s,e);
+  document.getElementById('rcnt').textContent=`${filtered.length.toLocaleString()} blocks`;
+  document.getElementById('tb').innerHTML=rows.map((r,i)=>{
+    const idx=s+i;
+    return `
+    <tr class="dr" onclick="expand(${idx})">
+      <td class="acn">${r.acc}</td>
+      <td><span class="badge bT" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;display:inline-block">${r.tissue}</span></td>
+      <td><span class="badge ${CBADGE[r.cat]||'bU'}">${r.cat}</span></td>
+      <td style="font-size:12px">${r.gender||'—'}</td>
+      <td style="font-size:12px">${r.age!=null?r.age:'—'}</td>
+      <td><div class="dp">${r.diagShort||'—'}</div></td>
+    </tr>
+    <tr id="xr${idx}" class="xrow"><td colspan="6">
+      <div class="xcnt">
+        <b>Full diagnosis:</b> ${r.diagText||'—'}<br>
+        <span style="margin-top:6px;display:inline-block;opacity:.7"><b>DOB:</b> ${r.dob||'—'} &nbsp;|&nbsp; <b>Accession:</b> ${r.acc} &nbsp;|&nbsp; <b>Source tab:</b> ${r.tab}</span>
+      </div>
+    </td></tr>`;
+  }).join('');
+  const max=Math.max(1,Math.ceil(filtered.length/PP));
+  document.getElementById('pi').textContent=`${Math.min(s+1,filtered.length).toLocaleString()}–${Math.min(e,filtered.length).toLocaleString()} of ${filtered.length.toLocaleString()}`;
+  document.getElementById('pp').disabled=page<=1;
+  document.getElementById('pn').disabled=page>=max;
+  const ps=[];for(let p=Math.max(1,page-2);p<=Math.min(max,page+2);p++)ps.push(p);
+  document.getElementById('pnums').innerHTML=ps.map(p=>`<button class="pb${p===page?' on':''}" onclick="goPage(${p})">${p}</button>`).join('');
+}
+
+function expand(idx){
+  if(expandedIdx!==null&&expandedIdx!==idx){
+    const prev=document.getElementById('xr'+expandedIdx);
+    if(prev)prev.style.display='none';
+  }
+  const row=document.getElementById('xr'+idx);
+  if(!row)return;
+  const show=row.style.display==='table-row';
+  row.style.display=show?'none':'table-row';
+  expandedIdx=show?null:idx;
+}
+
+function applyF(){
+  const t=document.getElementById('fT').value;
+  const d=document.getElementById('fD').value.toLowerCase();
+  const c=document.getElementById('fC').value;
+  const g=document.getElementById('fG').value;
+  const a=document.getElementById('fA').value.toLowerCase();
+  filtered=DATA.filter(r=>{
+    if(currentTab!=='All'&&r.tab!==currentTab)return false;
+    if(t&&r.tissue!==t)return false;
+    if(d&&!r.diagText.toLowerCase().includes(d)&&!r.diagShort.toLowerCase().includes(d))return false;
+    if(c&&r.cat!==c)return false;
+    if(g&&r.gender!==g)return false;
+    if(a&&!r.acc.toLowerCase().includes(a))return false;
+    return true;
+  });
+  if(sortCol!==null)doSort();
+  page=1;expandedIdx=null;
+  renderMetrics();renderCharts();renderTable();
+}
+
+function clearF(){
+  ['fT','fC','fG'].forEach(id=>document.getElementById(id).value='');
+  ['fD','fA'].forEach(id=>document.getElementById(id).value='');
+  currentTab='All';
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.textContent.trim().startsWith('All')));
+  filtered=[...DATA];page=1;expandedIdx=null;
+  renderMetrics();renderCharts();renderTable();
+}
+
+function setTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.textContent.trim().startsWith(tab)));
+  applyF();
+}
+
+const SCOLS=['acc',null,null,'tissue',null,null,'cat'];
+function srt(col){
+  const key=['acc',null,'gender','tissue','diagShort',null,'cat'][col]||String(col);
+  if(sortCol===key)sortDir*=-1;else{sortCol=key;sortDir=1;}
+  document.querySelectorAll('th').forEach(th=>{
+    th.classList.remove('srt');
+    const si=th.querySelector('.si');
+    if(si)si.textContent='↕';
+  });
+  const ths=document.querySelectorAll('th');
+  if(ths[col]){ths[col].classList.add('srt');const si=ths[col].querySelector('.si');if(si)si.textContent=sortDir===1?'↑':'↓';}
+  doSort();page=1;renderTable();
+}
+function doSort(){
+  filtered.sort((a,b)=>{
+    const av=a[sortCol]??'',bv=b[sortCol]??'';
+    return(typeof av==='number'?(av-bv):String(av).localeCompare(String(bv)))*sortDir;
+  });
+}
+
+function chPg(d){const max=Math.ceil(filtered.length/PP);page=Math.max(1,Math.min(max,page+d));expandedIdx=null;renderTable();}
+function goPage(p){page=p;expandedIdx=null;renderTable();}
+
+function doExport(){
+  if(!filtered.length)return;
+  const hdr='AccessionNumber,Tissue,Category,Gender,Age,DOB,DiagnosisShort,DiagnosisFull,Tab';
+  const rows=filtered.map(r=>[
+    r.acc,r.tissue,r.cat,r.gender,r.age??'',r.dob,
+    `"${(r.diagShort||'').replace(/"/g,'""')}"`,
+    `"${(r.diagText||'').replace(/"/g,'""')}"`,
+    r.tab
+  ].join(','));
+  const blob=new Blob([[hdr,...rows].join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`PathXDx_${currentTab.replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+init();
+</script>
+</body>
+</html>
