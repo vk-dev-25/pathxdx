@@ -207,7 +207,7 @@ async function init(){
     document.getElementById('loadMsg').textContent='Could not load data.json';
     document.getElementById('loadHint').innerHTML=
       '<strong>How to fix:</strong> Make sure <code>data.json</code> is in the same folder as this HTML file, then open via a local server or double-click the HTML.<br><br>'+
-      '<strong>Quick option:</strong> Run <code>python3 -m http.server 8080</code> in that folder, then open <code>http://localhost:8080</code>';
+      '<strong>Quick option:</strong> Run <code>python3 -m http.server 8080</code> in that folder, then open <code>localhost:8080</code> in your browser.';
     return;
   }
 
