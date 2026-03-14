@@ -18,6 +18,12 @@ const EXCLUDED_DIAGNOSIS_PHRASES = [
   'Free Text Diagnosis, See Comments',
 ];
 
+const EXCLUDED_TISSUES = new Set([
+  'Fluid', 'Medical Device', 'Calculus', 'Other', 'Nail', 'Mediastinum',
+  'SurePath Send Out', 'Products of Conception', 'FNA', 'Foreign Body',
+  'Graft', 'Lip', 'Teeth', 'Toe',
+]);
+
 function isBadPrimaryDiagnosis(val) {
   if (val == null) return true;
   const d = String(val).trim();
@@ -42,14 +48,15 @@ console.log('Total rows:', data.length);
 const sheet1Only = data.filter(r => r[7] === 'Sheet1');
 console.log('After keeping only Sheet1:', sheet1Only.length);
 
-// Remove rows where Tissue (index 3) is "Fluid"
-const noFluid = sheet1Only.filter(r => String(r[3] || '').trim() !== 'Fluid');
-if (noFluid.length !== sheet1Only.length) console.log('Removed Tissue=Fluid:', sheet1Only.length - noFluid.length, 'rows');
+// Remove rows where Tissue (index 3) is in EXCLUDED_TISSUES
+const tissueTrim = (v) => String(v || '').trim();
+const afterTissue = sheet1Only.filter(r => !EXCLUDED_TISSUES.has(tissueTrim(r[3])));
+if (afterTissue.length !== sheet1Only.length) console.log('Removed excluded tissues:', sheet1Only.length - afterTissue.length, 'rows');
 
 // Remove bad Primary Diagnosis (index 4)
-let cleaned = noFluid.filter(r => !isBadPrimaryDiagnosis(r[4]));
+let cleaned = afterTissue.filter(r => !isBadPrimaryDiagnosis(r[4]));
 console.log('After removing bad Primary Diagnosis:', cleaned.length);
-console.log('Removed (bad diagnosis):', noFluid.length - cleaned.length);
+console.log('Removed (bad diagnosis):', afterTissue.length - cleaned.length);
 
 // Transform: "Technical Processing Only" or "Technical Component Only" -> "Normal*", and Unknown -> "Normal/Control"
 function isTechnicalProcessingOnly(diag) {
