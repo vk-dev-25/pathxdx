@@ -299,7 +299,7 @@ function renderTable(){
     <tr id="xr${idx}" class="xrow"><td colspan="6">
       <div class="xcnt">
         <b>Full diagnosis:</b> ${r.diagText||'—'}<br>
-        <span style="margin-top:6px;display:inline-block;opacity:.7"><b>DOB:</b> ${r.dob||'—'} &nbsp;|&nbsp; <b>Accession:</b> ${r.acc} &nbsp;|&nbsp; <b>Source tab:</b> ${r.tab}</span>
+        <span style="margin-top:6px;display:inline-block;opacity:.7"><b>DOB:</b> ${r.dob||'—'} &nbsp;|&nbsp; <b>Accession:</b> ${r.acc} &nbsp;|&nbsp; <b>Source tab:</b> ${r.tab==='Sheet1'?'Main':r.tab}</span>
       </div>
     </td></tr>`;
   }).join('');
