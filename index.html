@@ -124,20 +124,20 @@ tr.dr:hover td{background:var(--bg2);cursor:pointer;}
         <select id="fC" onchange="applyF()"><option value="">All</option><option>Malignant</option><option>Benign</option><option>Normal/Control</option><option>Pre-malignant</option><option>Unknown</option></select>
       </div>
       <div class="fg"><label>Gender</label><select id="fG" onchange="applyF()"><option value="">All</option><option value="F">Female</option><option value="M">Male</option></select></div>
-      <div class="fg"><label>Accession #</label><input id="fA" placeholder="e.g. WH2008-" oninput="applyF()"/></div>
+      <div class="fg"><label>Catalog ID</label><input id="fK" placeholder="e.g. PTDX-PB-" oninput="applyF()"/></div>
       <button class="btn" onclick="clearF()">Clear</button>
     </div>
     <div class="tw">
       <div class="tbar"><span class="rcnt" id="rcnt"></span><button class="btn" onclick="doExport()">Export filtered CSV</button></div>
       <div class="tscr"><table style="table-layout:fixed">
-        <colgroup><col style="width:130px"><col style="width:130px"><col style="width:110px"><col style="width:55px"><col style="width:45px"><col style="width:auto"></colgroup>
+        <colgroup><col style="width:140px"><col style="width:130px"><col style="width:110px"><col style="width:55px"><col style="width:45px"><col style="width:auto"></colgroup>
         <thead><tr>
-          <th onclick="srt(0)">Accession # <i class="si">↕</i></th>
-          <th onclick="srt(3)">Tissue <i class="si">↕</i></th>
-          <th onclick="srt(6)">Category <i class="si">↕</i></th>
-          <th onclick="srt(2)">Gender <i class="si">↕</i></th>
+          <th onclick="srt(0)">Catalog ID <i class="si">↕</i></th>
+          <th onclick="srt(1)">Tissue <i class="si">↕</i></th>
+          <th onclick="srt(2)">Category <i class="si">↕</i></th>
+          <th onclick="srt(3)">Gender <i class="si">↕</i></th>
           <th>Age</th>
-          <th onclick="srt(4)">Primary diagnosis <i class="si">↕</i></th>
+          <th onclick="srt(5)">Primary diagnosis <i class="si">↕</i></th>
         </tr></thead>
         <tbody id="tb"></tbody>
       </table></div>
@@ -194,6 +194,7 @@ async function loadData(){
     DATA = raw.map(r=>({
       acc:r[0], dob:r[1], gender:r[2], tissue:r[3],
       diagShort:r[4], diagText:r[5], cat:r[6], tab:r[7],
+      catalogId:r[8]||'',
       age:calcAge(r[1])
     }));
     setProgress(100,'Ready');
@@ -291,7 +292,7 @@ function renderTable(){
     const idx=s+i;
     return `
     <tr class="dr" onclick="expand(${idx})">
-      <td class="acn">${r.acc}</td>
+      <td class="acn">${r.catalogId||'—'}</td>
       <td><span class="badge bT" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;display:inline-block">${r.tissue}</span></td>
       <td><span class="badge ${CBADGE[r.cat]||'bU'}">${r.cat}</span></td>
       <td style="font-size:12px">${r.gender||'—'}</td>
@@ -301,7 +302,7 @@ function renderTable(){
     <tr id="xr${idx}" class="xrow"><td colspan="6">
       <div class="xcnt">
         <b>Full diagnosis:</b> ${r.diagText||'—'}<br>
-        <span style="margin-top:6px;display:inline-block;opacity:.7"><b>DOB:</b> ${r.dob||'—'} &nbsp;|&nbsp; <b>Accession:</b> ${r.acc} &nbsp;|&nbsp; <b>Source tab:</b> ${r.tab==='Sheet1'?'Main':r.tab}</span>
+        <span style="margin-top:6px;display:inline-block;opacity:.7"><b>Catalog ID:</b> ${r.catalogId||'—'} &nbsp;|&nbsp; <b>DOB:</b> ${r.dob||'—'} &nbsp;|&nbsp; <b>Source tab:</b> ${r.tab==='Sheet1'?'Main':r.tab}</span>
       </div>
     </td></tr>`;
   }).join('');
@@ -330,14 +331,14 @@ function applyF(){
   const d=document.getElementById('fD').value.toLowerCase();
   const c=document.getElementById('fC').value;
   const g=document.getElementById('fG').value;
-  const a=document.getElementById('fA').value.toLowerCase();
+  const k=document.getElementById('fK').value.toLowerCase();
   filtered=DATA.filter(r=>{
     if(currentTab!=='All'&&r.tissue!==currentTab)return false;
     if(t&&r.tissue!==t)return false;
     if(d&&!r.diagText.toLowerCase().includes(d)&&!r.diagShort.toLowerCase().includes(d))return false;
     if(c&&r.cat!==c)return false;
     if(g&&r.gender!==g)return false;
-    if(a&&!r.acc.toLowerCase().includes(a))return false;
+    if(k&&!(r.catalogId||'').toLowerCase().includes(k))return false;
     return true;
   });
   if(sortCol!==null)doSort();
@@ -347,7 +348,7 @@ function applyF(){
 
 function clearF(){
   ['fT','fC','fG'].forEach(id=>document.getElementById(id).value='');
-  ['fD','fA'].forEach(id=>document.getElementById(id).value='');
+  ['fD','fK'].forEach(id=>document.getElementById(id).value='');
   currentTab='All';
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.textContent.trim().startsWith('All')));
   filtered=[...DATA];page=1;expandedIdx=null;
@@ -360,9 +361,9 @@ function setTab(tab){
   applyF();
 }
 
-const SCOLS=['acc',null,null,'tissue',null,null,'cat'];
 function srt(col){
-  const key=['acc',null,'gender','tissue','diagShort',null,'cat'][col]||String(col);
+  const keys=['catalogId','tissue','cat','gender',null,'diagShort'];
+  const key=keys[col]||String(col);
   if(sortCol===key)sortDir*=-1;else{sortCol=key;sortDir=1;}
   document.querySelectorAll('th').forEach(th=>{
     th.classList.remove('srt');
@@ -390,9 +391,9 @@ function goPage(p){page=p;expandedIdx=null;renderTable();}
 
 function doExport(){
   if(!filtered.length)return;
-  const hdr='AccessionNumber,Tissue,Category,Gender,Age,DOB,DiagnosisShort,DiagnosisFull,Tab';
+  const hdr='CatalogID,Tissue,Category,Gender,Age,DOB,DiagnosisShort,DiagnosisFull,Tab';
   const rows=filtered.map(r=>[
-    r.acc,r.tissue,r.cat,r.gender,r.age??'',r.dob,
+    r.catalogId||'',r.tissue,r.cat,r.gender,r.age??'',r.dob,
     `"${(r.diagShort||'').replace(/"/g,'""')}"`,
     `"${(r.diagText||'').replace(/"/g,'""')}"`,
     r.tab
