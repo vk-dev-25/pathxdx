@@ -42,13 +42,19 @@ const TISSUE_ABBR = {
 };
 
 console.log('Reading data.json...');
-const data = JSON.parse(fs.readFileSync('data.json', 'utf8'));
+let data = JSON.parse(fs.readFileSync('data.json', 'utf8'));
 console.log('Rows:', data.length);
 
-// Count per tissue
+// Normalize: Renal -> Kidney (so all use Kidney and PTDX-KI-* with unique IDs)
+function normalizeTissue(t) {
+  const s = String(t || '').trim();
+  return s === 'Renal' ? 'Kidney' : s;
+}
+
+// Count per tissue (after normalization)
 const tissueCount = {};
 data.forEach((r) => {
-  const t = String(r[3] || '').trim();
+  const t = normalizeTissue(r[3]);
   tissueCount[t] = (tissueCount[t] || 0) + 1;
 });
 
@@ -58,15 +64,16 @@ for (const [tissue, count] of Object.entries(tissueCount)) {
   tissueRandoms[tissue] = uniqueRandoms(count);
 }
 
-// Assign catalog IDs (consume one random per row per tissue, in file order)
+// Assign catalog IDs and normalize tissue (consume one random per row per tissue, in file order)
 const tissueIndex = {};
 const out = data.map((r) => {
-  const tissue = String(r[3] || '').trim();
+  const tissue = normalizeTissue(r[3]);
   const abbr = TISSUE_ABBR[tissue] || 'XX';
   tissueIndex[tissue] = tissueIndex[tissue] || 0;
   const num = tissueRandoms[tissue][tissueIndex[tissue]++];
   const catalogId = `PTDX-${abbr}-${num}`;
   const row = r.slice(0, 8);
+  row[3] = tissue; // ensure Renal is stored as Kidney
   row[8] = catalogId;
   return row;
 });

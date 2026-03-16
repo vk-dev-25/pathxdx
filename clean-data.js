@@ -88,6 +88,15 @@ cleaned = cleaned.map(r => {
 });
 if (transformCount) console.log('Transformed "Technical Processing/Component Only" -> Normal* (Unknown -> Normal/Control):', transformCount, 'rows');
 
+// Normalize: Renal -> Kidney
+let renalCount = 0;
+cleaned = cleaned.map(r => {
+  const t = String(r[3] || '').trim();
+  if (t === 'Renal') { renalCount++; const row = [...r]; row[3] = 'Kidney'; return row; }
+  return r;
+});
+if (renalCount) console.log('Normalized tissue Renal -> Kidney:', renalCount, 'rows');
+
 console.log('Writing updated data.json...');
 fs.writeFileSync('data.json', JSON.stringify(cleaned), 'utf8');
 console.log('Done.');
