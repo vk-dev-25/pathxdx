@@ -303,7 +303,7 @@ function renderTable(){
     <tr id="xr${idx}" class="xrow"><td colspan="7">
       <div class="xcnt">
         <b>Full diagnosis:</b> ${r.diagText||'—'}<br>
-        <span style="margin-top:6px;display:inline-block;opacity:.7"><b>Catalog ID:</b> ${r.catalogId||'—'} &nbsp;|&nbsp; <b>DOB:</b> ${r.dob||'—'} &nbsp;|&nbsp; <b>Accession:</b> ${r.acc} &nbsp;|&nbsp; <b>Source tab:</b> ${r.tab==='Sheet1'?'Main':r.tab}</span>
+        <span style="margin-top:6px;display:inline-block;opacity:.7"><b>Catalog ID:</b> ${r.catalogId||'—'} &nbsp;|&nbsp; <b>Accession:</b> ${r.acc} &nbsp;|&nbsp; <b>Source tab:</b> ${r.tab==='Sheet1'?'Main':r.tab}</span>
       </div>
     </td></tr>`;
   }).join('');
@@ -394,9 +394,9 @@ function goPage(p){page=p;expandedIdx=null;renderTable();}
 
 function doExport(){
   if(!filtered.length)return;
-  const hdr='CatalogID,AccessionNumber,Tissue,Category,Gender,Age,DOB,DiagnosisShort,DiagnosisFull,Tab';
+  const hdr='CatalogID,AccessionNumber,Tissue,Category,Gender,Age,DiagnosisShort,DiagnosisFull,Tab';
   const rows=filtered.map(r=>[
-    r.catalogId||'',r.acc,r.tissue,r.cat,r.gender,r.age??'',r.dob,
+    r.catalogId||'',r.acc,r.tissue,r.cat,r.gender,r.age??'',
     `"${(r.diagShort||'').replace(/"/g,'""')}"`,
     `"${(r.diagText||'').replace(/"/g,'""')}"`,
     r.tab
