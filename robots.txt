@@ -1,0 +1,7 @@
+User-agent: *
+# Specimen-level catalog and raw data — not for crawlers
+Disallow: /pathxinternalview/
+Disallow: /pathxinternalview
+
+# Public aggregate catalog at / may be indexed
+Allow: /

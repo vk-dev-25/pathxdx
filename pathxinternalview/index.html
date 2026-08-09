@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex, nofollow"/>
 <title>PathXDx — Tissue Block Catalog (Internal)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -167,9 +168,9 @@ const PAGE_SIZE_OPTIONS=[20,60,120];
 let pageSize=20;
 
 // Bump this when you deploy new data so browsers don't show cached data.json
-const DATA_VERSION = '2';
-// Load from repo root when served at /pathxinternalview/
-const DATA_URL = (typeof location !== 'undefined' && location.pathname.indexOf('pathxinternalview') !== -1) ? '../data.json?v=' + DATA_VERSION : 'data.json?v=' + DATA_VERSION;
+const DATA_VERSION = '3';
+// Specimen-level data lives only under pathxinternalview/ (not on the public catalog page)
+const DATA_URL = 'data.json?v=' + DATA_VERSION;
 let DATA=[], filtered=[], currentTab='All', page=1;
 let sortCol=null, sortDir=1, expandedIdx=null;
 let ch1=null, ch2=null;
@@ -213,7 +214,7 @@ async function init(){
   if(!ok){
     document.getElementById('loadMsg').textContent='Could not load data';
     document.getElementById('loadHint').innerHTML=
-      '<strong>Data could not be loaded.</strong> When deployed, ensure <code>data.json</code> is at the repo root.';
+      '<strong>Data could not be loaded.</strong> Ensure <code>pathxinternalview/data.json</code> is present when serving this internal page.';
     return;
   }
 
