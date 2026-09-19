@@ -120,7 +120,6 @@ tr:hover td{background:var(--bg2);}
               <th class="num" onclick="srt('Benign')">Benign <i class="si">↕</i></th>
               <th class="num" onclick="srt('Normal/Control')">Normal / Control <i class="si">↕</i></th>
               <th class="num" onclick="srt('Pre-malignant')">Pre-malignant <i class="si">↕</i></th>
-              <th class="num" onclick="srt('Unknown')">Unknown <i class="si">↕</i></th>
               <th class="num" onclick="srt('total')">Total <i class="si">↕</i></th>
             </tr>
           </thead>
@@ -135,8 +134,8 @@ tr:hover td{background:var(--bg2);}
 
 <script>
 const CONTACT='https://www.pathxdx.com/contact';
-const DATA_VERSION='1';
-const CATS=['Malignant','Benign','Normal/Control','Pre-malignant','Unknown'];
+const DATA_VERSION='2';
+const CATS=['Malignant','Benign','Normal/Control','Pre-malignant'];
 let DATA=null, rows=[], sortKey='total', sortDir=-1;
 
 function numVal(v){
