@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="description" content="PathXDx tissue block inventory by tissue type and category. Request specimen-level catalog access for research use."/>
+<meta name="description" content="PathXDx FFPE archive availability by organ and diagnostic category. Request specimen-level catalog access for research use."/>
 <title>PathXDx — Tissue Block Catalog</title>
 <style>
-:root{--bg:#fff;--bg2:#f7f6f3;--bg3:#f0efe9;--tx:#1a1a18;--tx2:#6b6a65;--tx3:#9c9a92;--bd:rgba(0,0,0,0.1);--bd2:rgba(0,0,0,0.2);--blue:#185FA5;--bbg:#E6F1FB;--bt:#0C447C;--rbg:#FCEBEB;--rt:#791F1F;--tbg:#E1F5EE;--tt:#085041;--abg:#FAEEDA;--at:#633806;--gbg:#F1EFE8;--gt:#444441;--pbg:#EEEDFE;--pt:#3C3489;--r:8px;--rl:12px;}
-@media(prefers-color-scheme:dark){:root{--bg:#1c1c1a;--bg2:#242422;--bg3:#2a2a27;--tx:#e8e6dc;--tx2:#9c9a92;--tx3:#6b6a65;--bd:rgba(255,255,255,0.1);--bd2:rgba(255,255,255,0.2);--blue:#378ADD;--bbg:#042C53;--bt:#85B7EB;--rbg:#501313;--rt:#F09595;--tbg:#04342C;--tt:#5DCAA5;--abg:#412402;--at:#EF9F27;--gbg:#2C2C2A;--gt:#B4B2A9;--pbg:#26215C;--pt:#AFA9EC;}}
+:root{--bg:#fff;--bg2:#f7f6f3;--bg3:#f0efe9;--tx:#1a1a18;--tx2:#6b6a65;--tx3:#9c9a92;--bd:rgba(0,0,0,0.1);--bd2:rgba(0,0,0,0.2);--blue:#185FA5;--bbg:#E6F1FB;--bt:#0C447C;--abg:#FAEEDA;--at:#633806;--r:8px;--rl:12px;}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1a;--bg2:#242422;--bg3:#2a2a27;--tx:#e8e6dc;--tx2:#9c9a92;--tx3:#6b6a65;--bd:rgba(255,255,255,0.1);--bd2:rgba(255,255,255,0.2);--blue:#378ADD;--bbg:#042C53;--bt:#85B7EB;--abg:#412402;--at:#EF9F27;}}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--tx);font-size:14px;}
 .hdr{background:var(--bg);border-bottom:0.5px solid var(--bd);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
@@ -16,45 +16,45 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .bname{font-size:15px;font-weight:600;color:var(--tx);}
 .bsub{font-size:11px;color:var(--tx3);margin-top:1px;}
 .hact{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.main{max-width:1100px;margin:0 auto;padding:18px 20px;}
+.main{max-width:1280px;margin:0 auto;padding:18px 20px;}
 .loading{text-align:center;padding:60px 20px;color:var(--tx2);}
 .spin{width:30px;height:30px;border:2px solid var(--bd2);border-top-color:var(--blue);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 14px;}
 @keyframes sp{to{transform:rotate(360deg);}}
 .btn{font-size:12px;padding:7px 14px;border:0.5px solid var(--bd2);border-radius:var(--r);background:transparent;color:var(--tx);cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;}
 .btn:hover{background:var(--bg2);}
 .btn.pri{background:var(--bbg);color:var(--bt);border-color:transparent;font-weight:500;}
-.btn.pri:hover{filter:brightness(.97);}
-.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px;}
-.metric{background:var(--bg2);border-radius:var(--r);padding:12px 14px;}
-.mlbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
-.mval{font-size:20px;font-weight:600;line-height:1;color:var(--tx);}
-.msub{font-size:11px;color:var(--tx3);margin-top:3px;}
 .scope{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:14px 16px;margin-bottom:14px;font-size:13px;line-height:1.55;color:var(--tx2);}
 .scope strong{color:var(--tx);}
 .cta{background:var(--bbg);border-radius:var(--rl);padding:16px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
 .cta h2{font-size:15px;font-weight:600;color:var(--bt);margin-bottom:4px;}
 .cta p{font-size:12px;color:var(--bt);opacity:.85;max-width:640px;line-height:1.45;}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px;}
+.metric{background:var(--bg2);border-radius:var(--r);padding:12px 14px;}
+.mlbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.mval{font-size:20px;font-weight:600;line-height:1;color:var(--tx);}
+.msub{font-size:11px;color:var(--tx3);margin-top:3px;}
 .filters{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
-.fg{display:flex;flex-direction:column;gap:3px;flex:1;min-width:140px;}
+.fg{display:flex;flex-direction:column;gap:3px;flex:1;min-width:160px;}
 .fg label{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;}
-.fg select,.fg input{font-size:12px;padding:6px 9px;background:var(--bg2);border:0.5px solid var(--bd2);border-radius:var(--r);color:var(--tx);outline:none;}
-.fg select:focus,.fg input:focus{border-color:var(--blue);}
-.tw{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;}
-.tbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:0.5px solid var(--bd);gap:10px;flex-wrap:wrap;}
+.fg input{font-size:12px;padding:6px 9px;background:var(--bg2);border:0.5px solid var(--bd2);border-radius:var(--r);color:var(--tx);outline:none;}
+.fg input:focus{border-color:var(--blue);}
+.tw{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:12px;}
+.tbar{padding:10px 14px;border-bottom:0.5px solid var(--bd);}
+.tbar h3{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:2px;}
 .rcnt{font-size:12px;color:var(--tx3);}
 .tscr{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:12px;}
-th{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:0.5px solid var(--bd);text-align:left;white-space:nowrap;background:var(--bg2);cursor:pointer;user-select:none;}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:980px;}
+th{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:0.5px solid var(--bd);text-align:left;white-space:nowrap;background:var(--bg2);cursor:pointer;user-select:none;}
 th:hover{color:var(--tx);}
 th.num,td.num{text-align:right;}
 th.srt .si{color:var(--blue);opacity:1;}
 .si{margin-left:3px;opacity:.35;font-style:normal;}
-td{padding:9px 10px;border-bottom:0.5px solid var(--bd);vertical-align:middle;}
+td{padding:8px 10px;border-bottom:0.5px solid var(--bd);vertical-align:middle;white-space:nowrap;}
+td.organ{white-space:normal;font-weight:500;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--bg2);}
-.tfoot td{background:var(--bg2);font-weight:600;border-top:0.5px solid var(--bd);}
-.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;white-space:nowrap;background:var(--bbg);color:var(--bt);}
-.note{font-size:11px;color:var(--tx3);margin-top:10px;line-height:1.45;}
+.note{font-size:11px;color:var(--tx3);margin-top:8px;line-height:1.5;}
+.note + .note{margin-top:4px;}
 @media(max-width:700px){.metrics{grid-template-columns:1fr;}.fg{min-width:100%;}}
 </style>
 </head>
@@ -80,73 +80,61 @@ tr:hover td{background:var(--bg2);}
   </div>
 
   <div id="app" style="display:none">
-    <div class="scope">
-      <strong>About this catalog.</strong>
-      Research-consented specimens for preclinical and translational research use. Counts reflect current inventory and change frequently. Specimen-level detail is available to qualified researchers on request. Annotations are provided as supplied by the source institution, are for research reference only, and are not diagnostic determinations by PathXDx.
-    </div>
-
     <div class="cta">
       <div>
         <h2>Need specimen-level detail or a quote?</h2>
-        <p>Age, gender, and pathology annotations are available after review. Tell us your tissue type, category, and intended research use — we’ll respond by email.</p>
+        <p>Tell us your organ / tissue, category, and intended research use — we’ll respond by email.</p>
       </div>
       <a class="btn pri" href="https://www.pathxdx.com/contact" target="_blank" rel="noopener">Contact PathXDx</a>
     </div>
 
-    <div class="metrics" id="metrics"></div>
-
     <div class="filters">
-      <div class="fg"><label>Search tissue</label><input id="fQ" placeholder="e.g. breast, lung, colon…" oninput="applyF()"/></div>
-      <div class="fg"><label>Min total</label>
-        <select id="fMin" onchange="applyF()">
-          <option value="0">Any</option>
-          <option value="10">10+</option>
-          <option value="50">50+</option>
-          <option value="100">100+</option>
-          <option value="500">500+</option>
-        </select>
-      </div>
+      <div class="fg"><label>Search organ / tissue</label><input id="fQ" placeholder="e.g. breast, lung, colon…" oninput="applyF()"/></div>
       <button class="btn" onclick="clearF()">Clear</button>
     </div>
 
     <div class="tw">
-      <div class="tbar"><span class="rcnt" id="rcnt"></span></div>
+      <div class="tbar">
+        <h3 id="title">Availability by organ and diagnostic category</h3>
+        <div class="rcnt" id="rcnt"></div>
+      </div>
       <div class="tscr">
         <table>
           <thead>
             <tr>
-              <th onclick="srt('tissue')">Tissue type <i class="si">↕</i></th>
-              <th class="num" onclick="srt('Malignant')">Malignant <i class="si">↕</i></th>
+              <th onclick="srt('tissue')">Organ / tissue <i class="si">↕</i></th>
+              <th class="num" onclick="srt('Normal/Control')">Normal / control <i class="si">↕</i></th>
               <th class="num" onclick="srt('Benign')">Benign <i class="si">↕</i></th>
-              <th class="num" onclick="srt('Normal/Control')">Normal / Control <i class="si">↕</i></th>
               <th class="num" onclick="srt('Pre-malignant')">Pre-malignant <i class="si">↕</i></th>
-              <th class="num" onclick="srt('total')">Total <i class="si">↕</i></th>
+              <th class="num" onclick="srt('Malignant')">Malignant <i class="si">↕</i></th>
+              <th class="num" onclick="srt('total')">Total cases <i class="si">↕</i></th>
+              <th class="num" onclick="srt('inflammatory')">of which inflammatory / infectious <i class="si">↕</i></th>
+              <th onclick="srt('age')">Age at collection <i class="si">↕</i></th>
+              <th onclick="srt('sex')">Sex split <i class="si">↕</i></th>
             </tr>
           </thead>
           <tbody id="tb"></tbody>
-          <tfoot class="tfoot" id="tf"></tfoot>
         </table>
       </div>
     </div>
-    <p class="note" id="note"></p>
+
+    <p class="note" id="note1"></p>
+    <p class="note" id="note2"></p>
+    <p class="note" id="note3"></p>
   </div>
 </div>
 
 <script>
-const CONTACT='https://www.pathxdx.com/contact';
-const DATA_VERSION='2';
-const CATS=['Malignant','Benign','Normal/Control','Pre-malignant'];
+const DATA_VERSION='3';
+const RANGE_ORDER={'-':0,'<5':1,'5-25':2,'25-100':3,'100-250':4,'250-500':5,'500-1,000':6,'1,000-2,500':7,'2,500-5,000':8,'5,000-10,000':9,'10,000+':10};
 let DATA=null, rows=[], sortKey='total', sortDir=-1;
 
-function numVal(v){
-  if(v==='<5') return 4;
-  const n=Number(v);
-  return Number.isFinite(n)?n:0;
+function rangeVal(v){
+  if(v==null||v==='—') return -1;
+  return RANGE_ORDER[v]??-1;
 }
-function fmt(v){
-  if(v==='<5') return '&lt;5';
-  if(typeof v==='number') return v.toLocaleString();
-  return String(v??'—');
+function esc(s){
+  return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 async function init(){
@@ -161,83 +149,65 @@ async function init(){
   document.getElementById('loadWrap').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('bsub').textContent=
-    Number(DATA.totalBlocks).toLocaleString()+' blocks · '+DATA.tissueTypes+' tissue types';
-  document.getElementById('note').textContent=DATA.note||'';
-  document.getElementById('metrics').innerHTML=`
-    <div class="metric"><div class="mlbl">Total blocks</div><div class="mval">${fmt(DATA.totalBlocks)}</div><div class="msub">Current inventory</div></div>
-    <div class="metric"><div class="mlbl">Tissue types</div><div class="mval">${DATA.tissueTypes}</div><div class="msub">In catalog</div></div>
-    <div class="metric"><div class="mlbl">Malignant</div><div class="mval">${fmt(DATA.categoryTotals.Malignant)}</div><div class="msub">Across all tissues</div></div>
-  `;
+    (DATA.totalBlocksDisplay||'')+' cases · '+DATA.tissueTypes+' organs / tissues';
+  document.getElementById('title').textContent=DATA.title||'Availability by organ and diagnostic category';
+  document.getElementById('rcnt').textContent=DATA.subtitle||'';
+  const notes=DATA.footnotes||[];
+  document.getElementById('note1').textContent=notes[0]||'';
+  document.getElementById('note2').textContent=notes[1]||'';
+  document.getElementById('note3').textContent=notes[2]||'';
   rows=[...DATA.rows];
   applyF();
 }
 
 function applyF(){
   const q=(document.getElementById('fQ').value||'').toLowerCase().trim();
-  const min=Number(document.getElementById('fMin').value)||0;
-  rows=DATA.rows.filter(r=>{
-    if(q && !r.tissue.toLowerCase().includes(q)) return false;
-    if(min && numVal(r.total)<min) return false;
-    return true;
-  });
+  rows=DATA.rows.filter(r=>!q || r.tissue.toLowerCase().includes(q));
   doSort();
   render();
 }
-
-function clearF(){
-  document.getElementById('fQ').value='';
-  document.getElementById('fMin').value='0';
-  applyF();
-}
+function clearF(){ document.getElementById('fQ').value=''; applyF(); }
 
 function srt(key){
   if(sortKey===key) sortDir*=-1;
-  else { sortKey=key; sortDir=key==='tissue'?1:-1; }
-  document.querySelectorAll('th').forEach(th=>{
+  else { sortKey=key; sortDir=(key==='tissue'||key==='age'||key==='sex')?1:-1; }
+  document.querySelectorAll('.tw').item(0)?.querySelectorAll('th').forEach(th=>{
     th.classList.remove('srt');
     const si=th.querySelector('.si');
     if(si) si.textContent='↕';
+    if(th.getAttribute('onclick')===`srt('${key}')`){
+      th.classList.add('srt');
+      const s=th.querySelector('.si');
+      if(s) s.textContent=sortDir===1?'↑':'↓';
+    }
   });
-  const th=[...document.querySelectorAll('th')].find(t=>t.getAttribute('onclick')===`srt('${key}')`);
-  if(th){
-    th.classList.add('srt');
-    const si=th.querySelector('.si');
-    if(si) si.textContent=sortDir===1?'↑':'↓';
-  }
   doSort();
   render();
 }
-
 function doSort(){
   rows.sort((a,b)=>{
-    if(sortKey==='tissue') return a.tissue.localeCompare(b.tissue)*sortDir;
-    return (numVal(a[sortKey])-numVal(b[sortKey]))*sortDir;
+    if(sortKey==='tissue'||sortKey==='age'||sortKey==='sex')
+      return String(a[sortKey]||'').localeCompare(String(b[sortKey]||''))*sortDir;
+    return (rangeVal(a[sortKey])-rangeVal(b[sortKey]))*sortDir;
   });
 }
 
-function render(){
-  document.getElementById('rcnt').textContent=`${rows.length.toLocaleString()} tissue types shown`;
-  document.getElementById('tb').innerHTML=rows.map(r=>`
-    <tr>
-      <td><span class="badge">${r.tissue}</span></td>
-      ${CATS.map(c=>`<td class="num">${fmt(r[c])}</td>`).join('')}
-      <td class="num"><strong>${fmt(r.total)}</strong></td>
-    </tr>
-  `).join('');
+function rowHtml(r){
+  return `<tr>
+    <td class="organ">${esc(r.tissue)}</td>
+    <td class="num">${esc(r['Normal/Control'])}</td>
+    <td class="num">${esc(r.Benign)}</td>
+    <td class="num">${esc(r['Pre-malignant'])}</td>
+    <td class="num">${esc(r.Malignant)}</td>
+    <td class="num"><strong>${esc(r.total)}</strong></td>
+    <td class="num">${esc(r.inflammatory)}</td>
+    <td>${esc(r.age)}</td>
+    <td>${esc(r.sex)}</td>
+  </tr>`;
+}
 
-  const sums=Object.fromEntries(CATS.map(c=>[c,0]));
-  let total=0;
-  rows.forEach(r=>{
-    CATS.forEach(c=>{ sums[c]+=numVal(r[c]); });
-    total+=numVal(r.total);
-  });
-  document.getElementById('tf').innerHTML=`
-    <tr>
-      <td>Shown total (approx.)</td>
-      ${CATS.map(c=>`<td class="num">${sums[c].toLocaleString()}</td>`).join('')}
-      <td class="num">${total.toLocaleString()}</td>
-    </tr>
-  `;
+function render(){
+  document.getElementById('tb').innerHTML=rows.map(rowHtml).join('');
 }
 
 init();
